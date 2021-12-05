@@ -17,7 +17,7 @@ export default {
   external: ['./slug.txt'],
   plugins: [
     commonjs(),
-    nodeResolve({ browser: true }),
+    nodeResolve({ browser: true,  exportConditions: ['worker'] }),
     terser(),
     copy({
       targets: [{ src: './src/slug.txt', dest: './dist/' }],
