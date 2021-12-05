@@ -1,15 +1,21 @@
-import slug from 'slug.txt'
+import { track } from 'workers-logger'
 
-export default {
-  async fetch(request, env) {
-    try {
-      return await handleRequest(request, env)
-    } catch (e) {
-      return new Response(e.message)
-    }
+const reporter = events => void console.log(events)
+
+// JS version of https://github.com/maraisr/workers-logger/blob/main/examples/workers/basic-module/index.ts
+
+const worker = {
+  async fetch(request, _env, context) {
+    const log = track(request, 'worker-example', reporter)
+
+    log.info('gearing up to make a response')
+
+    const res = new Response('hi there')
+
+    context.waitUntil(log.report(res))
+
+    return res
   },
 }
 
-async function handleRequest(request, env) {
-  return new Response(slug)
-}
+export default worker
